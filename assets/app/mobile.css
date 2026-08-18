@@ -1,0 +1,297 @@
+/* ══════════════════════════════════════════
+   普算移动端适配 —— 真正的手机体验
+   触发条件：视口宽度 <= 900px（手机/窄平板）
+   ══════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+  /* ── 基础 ── */
+  html, body { overflow: hidden; }
+  body { font-size: 15px; }
+
+  /* ── 侧边栏：抽屉式 ── */
+  .sidebar {
+    position: fixed !important;
+    left: 0; top: 0; bottom: 0;
+    width: 78vw !important;
+    max-width: 320px !important;
+    min-width: 0 !important;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    box-shadow: 2px 0 20px rgba(0,0,0,0.18);
+    border-right: 1px solid var(--border-glass);
+    background: var(--bg-primary);
+    -webkit-overflow-scrolling: touch;
+  }
+  body.sidebar-open .sidebar { transform: translateX(0); }
+
+  /* 遮罩 */
+  body.sidebar-open::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 190;
+  }
+
+  /* 汉堡按钮 */
+  .mobile-hamburger {
+    display: inline-flex !important;
+    align-items: center; justify-content: center;
+    width: 42px; height: 42px;
+    border: none; background: transparent;
+    cursor: pointer; color: var(--text-primary);
+    border-radius: 10px;
+    margin-right: 4px;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-hamburger:active { background: var(--bg-hover); }
+
+  /* 隐藏桌面装饰 */
+  .resize-handle { display: none !important; }
+  .title-btn { display: none !important; }
+  .title-bar-controls { display: none !important; }
+  .pywebview-drag-region { -webkit-app-region: no-drag !important; }
+
+  /* ── 聊天头部 ── */
+  .chat-header {
+    height: 52px !important;
+    padding: 0 10px !important;
+    border-bottom: 1px solid var(--border-glass);
+  }
+  .chat-title {
+    font-size: 16px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── 消息区 ── */
+  .chat-area {
+    padding: 8px 10px !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 消息行 */
+  .msg-row { margin-bottom: 10px !important; }
+
+  /* 气泡 */
+  .msg-bubble {
+    max-width: 88% !important;
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+    padding: 10px 12px !important;
+    border-radius: 14px !important;
+  }
+  /* 用户气泡更贴合右侧 */
+  .msg-row.user .msg-bubble {
+    border-bottom-right-radius: 4px !important;
+  }
+  .msg-row.assistant .msg-bubble {
+    border-bottom-left-radius: 4px !important;
+  }
+
+  /* 思考过程折叠 */
+  .reasoning-block { font-size: 13px !important; }
+
+  /* 工具卡片 */
+  .tool-card {
+    font-size: 13px !important;
+    padding: 8px 10px !important;
+  }
+
+  /* ── 输入区：加大、圆润、贴近底部 ── */
+  .input-area {
+    padding: 6px 10px 10px !important;
+    border-top: 1px solid var(--border-glass);
+    background: var(--bg-primary);
+  }
+  .input-box {
+    border-radius: 16px !important;
+    border: 1px solid var(--border-glass) !important;
+    padding: 4px 8px 6px !important;
+    background: var(--bg-secondary) !important;
+  }
+  .input-top textarea#msgInput {
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    padding: 8px 4px !important;
+    min-height: 40px !important;
+    max-height: 120px !important;
+    background: transparent !important;
+  }
+  .send-btn {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50% !important;
+    font-size: 17px !important;
+  }
+  .attach-btn, .model-trigger, .thinking-trigger, .permission-trigger {
+    min-height: 38px !important;
+    padding: 6px 8px !important;
+    font-size: 13px !important;
+    border-radius: 10px !important;
+  }
+  .input-left-actions {
+    gap: 2px !important;
+    flex-wrap: wrap;
+  }
+  .context-ring { margin-left: 4px !important; }
+
+  /* ── 设置面板全屏 ── */
+  .settings-view { padding: 0 !important; }
+  .settings-panel {
+    position: fixed !important;
+    inset: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    padding: 52px 14px 20px !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 150;
+    background: var(--bg-primary);
+  }
+  .settings-panel .panel-header { padding-top: 4px !important; }
+  .setting-row { padding: 12px 6px !important; }
+
+  /* ── 侧边栏内容紧凑 ── */
+  .sidebar-header { padding: 16px 12px 10px !important; }
+  .sidebar-brand h1 { font-size: 17px !important; }
+  .conv-item { padding: 12px 14px !important; font-size: 14px !important; }
+
+  /* ── 交互卡片 ── */
+  .interactive-card {
+    max-width: 94% !important;
+    margin: 8px auto !important;
+    font-size: 14px !important;
+  }
+  .af-input {
+    font-size: 16px !important;
+    padding: 10px !important;
+  }
+
+  /* ── 下拉菜单 ── */
+  .model-dropdown, .thinking-dropdown, .permission-dropdown, .attach-dropdown {
+    max-height: 50vh !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── 空状态 ── */
+  .empty-state { padding: 40px 20px !important; }
+  .empty-state h2 { font-size: 18px !important; }
+
+  /* 触控反馈 */
+  .conv-item:active, .model-dropdown-item:active, .btn:active {
+    background: var(--bg-hover);
+  }
+  * { -webkit-tap-highlight-color: transparent; }
+}
+
+/* 横屏窄平板：侧边栏适度收窄 */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .sidebar { width: 240px !important; }
+  .mobile-hamburger { display: none !important; }
+}
+
+/* ══════════════════════════════════════════
+   追加：悬浮汉堡按钮 + 下拉菜单移动端美化
+   ══════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+  /* 悬浮汉堡按钮：固定左上角，避开 drag-region */
+  .mobile-hamburger-fab {
+    position: fixed !important;
+    left: 12px;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    z-index: 9999;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--text-primary);
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .mobile-hamburger-fab:active {
+    transform: scale(0.92);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  }
+  .mobile-hamburger-fab:active { background: var(--bg-hover); }
+
+  /* 侧边栏打开时汉堡按钮保持可见（抽屉在上层） */
+  body.sidebar-open .mobile-hamburger-fab {
+    z-index: 300;
+    left: calc(78vw - 52px);
+  }
+  @media (min-width: 901px) {
+    .mobile-hamburger-fab { display: none !important; }
+  }
+
+  /* ── 下拉菜单：桌面版向上弹出，移动端改为向下且更美观 ── */
+  .model-dropdown,
+  .thinking-dropdown,
+  .permission-dropdown,
+  .attach-dropdown {
+    position: fixed !important;
+    bottom: auto !important;
+    top: auto !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    max-height: 45vh !important;
+    background: var(--bg-primary) !important;
+    border: 1px solid var(--border-glass) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18) !important;
+    padding: 6px !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 9998;
+  }
+  .model-dropdown-item,
+  .thinking-dropdown-item,
+  .permission-dropdown-item {
+    padding: 12px 14px !important;
+    font-size: 15px !important;
+    border-radius: 10px !important;
+    margin-bottom: 2px;
+  }
+  .model-dropdown-item:active,
+  .thinking-dropdown-item:active,
+  .permission-dropdown-item:active {
+    background: var(--bg-hover);
+  }
+  .model-dropdown-empty {
+    padding: 16px !important;
+    font-size: 13px !important;
+    color: var(--text-secondary) !important;
+    text-align: center;
+  }
+
+  /* 下拉菜单定位：由 JS 计算，若未计算则默认放在屏幕下方 1/4 处 */
+  .model-dropdown:not([style*="top"]),
+  .thinking-dropdown:not([style*="top"]),
+  .permission-dropdown:not([style*="top"]),
+  .attach-dropdown:not([style*="top"]) {
+    top: 55% !important;
+  }
+
+  /* 附件下拉 */
+  .attach-dropdown-item {
+    padding: 12px 14px !important;
+    font-size: 15px !important;
+    border-radius: 10px !important;
+  }
+}

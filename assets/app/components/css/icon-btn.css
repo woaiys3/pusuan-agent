@@ -1,0 +1,144 @@
+/*
+ * ══════════════════════════════════════════════════════════
+ *  图标按钮组件 (Icon Button)
+ *  适用于：编辑、复制、删除等纯图标操作按钮
+ * ══════════════════════════════════════════════════════════
+ *
+ *  基础类：.icon-btn              → 14×14 图标容器
+ *  变体类：.icon-btn-edit         → 编辑（铅笔）
+ *  变体类：.icon-btn-copy         → 复制（双文件）
+ *  变体类：.icon-btn-branch       → 分支（git 分支）
+ *  变体类：.icon-btn-delete       → 删除（垃圾桶）
+ *
+ * ── 使用示例 ──────────────────────────────────────────────
+ *
+ *  1. 编辑按钮
+ *     <span class="icon-btn icon-btn-edit" onclick="...">
+ *       <svg><use href="components/icon-edit.svg#edit"/></svg>
+ *     </span>
+ *
+ *  2. 复制按钮
+ *     <span class="icon-btn icon-btn-copy" onclick="...">
+ *       <svg><use href="components/icon-copy.svg#copy"/></svg>
+ *     </span>
+ *     JS: btn.classList.add('copied');  // 变绿提示
+ *
+ *  3. 删除按钮（二次确认型）
+ *     <span class="icon-btn icon-btn-delete" onclick="...">
+ *       <svg><use href="components/icon-trash.svg#trash"/></svg>
+ *     </span>
+ *     JS: 第一次点击 → btn.classList.add('confirming')（变红）
+ *         第二次点击 → 执行删除
+ *         3 秒自动取消 / 点击外部取消
+ *
+ * ── 设计规范 ──────────────────────────────────────────────
+ *
+ *  编辑按钮：
+ *    - 默认 text-tertiary，hover 变 text-primary
+ *
+ *  复制按钮：
+ *    - 同编辑，额外 .copied 变 #4caf50
+ *
+ *  删除按钮：
+ *    - 默认 opacity 0.35（淡隐），hover 0.7
+ *    - .confirming 态 opacity 1 + SVG 描边变红 #d32f2f
+ *
+ *  颜色体系：
+ *    默认    → var(--text-tertiary)
+ *    hover   → var(--text-primary)
+ *    确认/成功 → #4caf50
+ *    危险    → #d32f2f
+ *
+ * ══════════════════════════════════════════════════════════
+ */
+
+/* ── 基础样式 ── */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  transition: color 0.15s, opacity 0.15s;
+}
+
+.icon-btn svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ══════════════════════════════════════════
+ *  变体
+ * ══════════════════════════════════════════ */
+
+/* ── 编辑按钮 ── */
+.icon-btn-edit:hover {
+  color: var(--text-primary);
+}
+
+/* ── 复制按钮 ── */
+.icon-btn-copy:hover {
+  color: var(--text-primary);
+}
+
+.icon-btn-copy.copied {
+  color: #4caf50;
+}
+
+/* ── 分支按钮 ── */
+.icon-btn-branch:hover {
+  color: var(--text-primary);
+}
+
+/* ── 删除按钮 ── */
+.icon-btn-delete {
+  opacity: 0.35;
+}
+
+.icon-btn-delete:hover {
+  opacity: 0.7;
+}
+
+.icon-btn-delete.confirming {
+  opacity: 1;
+}
+
+.icon-btn-delete.confirming svg {
+  stroke: #d32f2f;
+}
+
+/* ══════════════════════════════════════════
+ *  交互模式参考（JS 伪代码）
+ * ══════════════════════════════════════════ */
+
+/*
+ * ── 复制（反馈型） ──
+ *  点击 → 短暂变绿 → 自动恢复
+ *
+ *  btn.classList.add('copied');
+ *  setTimeout(() => btn.classList.remove('copied'), 1500);
+ *
+ * ── 删除（二次确认型） ──
+ *  第一次点击 → 变红
+ *  第二次点击 → 执行删除
+ *  3 秒 / 点击外部 → 恢复
+ *
+ *  let confirmingId = null;
+ *  btn.addEventListener('click', (e) => {
+ *    if (confirmingId === id) {
+ *      confirmingId = null;
+ *      btn.classList.remove('confirming');
+ *      doDelete(id);
+ *    } else {
+ *      confirmingId = id;
+ *      btn.classList.add('confirming');
+ *    }
+ *  });
+ */

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>任务卡片样式施工场</title>
+<!-- ══════════════════════════════════════════════════════════
+  任务卡片（task 工具，纯展示）—— 样式/结构施工场
+  来源：frontend/index.html 中的 .task-card 系列样式 + Pusuan._taskCardTemplate
+  用法：浏览器直接打开本文件即可预览；改动满意后手动同步回 index.html
+  （CSS 块复制回 <style> 对应位置，模板函数复制回 Pusuan 对象对应方法）
+  ══════════════════════════════════════════════════════════ -->
+<style>
+/* ── 变量（从 index.html :root 提取，任务卡片用到的部分） ── */
+:root {
+  --bg-primary: #ffffff;
+  --bg-hover: #e5e5e5;          /* 全界面统一交互灰 */
+  --border-glass: rgba(0,0,0,0.08);
+  --accent: #1a1a1a;
+  --text-primary: #1f1f1f;
+  --text-secondary: #737373;
+  --text-tertiary: #a2a2ab;
+  --radius: 12px;
+}
+
+/* ── 施工场页面壳（非卡片样式，仅便于预览） ── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 32px 24px 48px;
+}
+.page-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.page-desc { font-size: 12px; color: var(--text-tertiary); margin-bottom: 24px; line-height: 1.6; }
+#demo { max-width: 520px; }
+
+/* ══════════════════════════════════════════════════════════
+   任务卡片样式 v3 —— 参考提问卡片（interactive-card）视觉语言：
+   白底宽松内边距、数字圆点步骤、细线克制、留白建结构
+   ══════════════════════════════════════════════════════════ */
+.task-card {
+  background: #fff;
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  padding: 18px 24px 16px;
+  max-width: 480px;
+  margin: 10px 0;
+}
+/* ── 标题行：任务名 + 状态（始终展开，无折叠交互） ── */
+.task-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.task-card-title {
+  flex: 1;
+  display: flex; align-items: baseline; gap: 6px;
+  font-size: 13px; font-weight: 600; color: var(--text-primary);
+  overflow: hidden; white-space: nowrap;
+}
+.task-card-id {
+  font-size: 11px; font-weight: 400; color: var(--text-tertiary);
+}
+/* ── 步骤行：数字圆点（同提问卡片 af-step）+ 名称 + 状态 ── */
+.task-step {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 0;
+  font-size: 13px; color: var(--text-secondary);
+}
+.task-step-index {
+  width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 600;
+  border: 1.5px solid rgba(0,0,0,0.14);
+  color: var(--text-tertiary);
+  background: transparent;
+}
+.task-step-name {
+  flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* 状态文字：待执行浅灰 / 已执行中灰 / 执行中加深加粗 / 废弃淡化删除线 */
+.task-step-status {
+  font-size: 11px; color: var(--text-tertiary); flex-shrink: 0;
+}
+.task-step.running .task-step-index { background: var(--accent); border-color: var(--accent); color: #fff; transform: scale(1.15); }
+.task-step.running .task-step-name { color: var(--text-primary); font-weight: 600; }
+.task-step.running .task-step-status { color: var(--text-secondary); }
+.task-step.done .task-step-index { background: var(--accent); border-color: var(--accent); color: #fff; }
+.task-step.done .task-step-status { color: var(--text-secondary); }
+.task-step.abandoned { opacity: 0.45; }
+.task-step.abandoned .task-step-name { text-decoration: line-through; }
+</style>
+</head>
+<body>
+  <div class="page-title">任务卡片样式施工场</div>
+  <div class="page-desc">
+    下方示例覆盖全部状态（待执行 / 执行中 / 已执行 / 废弃；任务未完成 / 已完成）。<br>
+    改完样式满意后，把 <b>.task-card 系列 CSS</b> 复制回 frontend/index.html 的
+    「任务卡片」段落，<b>taskCardTemplate / toggleTaskCard</b> 复制回 Pusuan 对象对应方法。
+  </div>
+  <div id="demo"></div>
+
+<script>
+/* ── 与 frontend/index.html 一致的模板渲染（独立版） ── */
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text == null ? '' : String(text);
+  return div.innerHTML;
+}
+
+// 对应 Pusuan._taskCardTemplate（此处为全局函数版）
+function taskCardTemplate(data) {
+  const steps = (data.steps || []).map(s => {
+    const st = s.status || '';
+    const cls = st === '执行中' ? 'running'
+      : (st === '已执行' ? 'done'
+      : (st === '废弃' ? 'abandoned' : ''));
+    const statusLabel = st === '已执行' ? '已执行'
+      : (st === '废弃' ? '已废弃' : st);
+    return `
+      <div class="task-step ${cls}">
+        <span class="task-step-index">${s.index || ''}</span>
+        <span class="task-step-name">${escapeHtml(s.name || '')}</span>
+        <span class="task-step-status">${escapeHtml(statusLabel)}</span>
+      </div>`;
+  }).join('');
+  return `
+    <div class="task-card-header">
+      <span class="task-card-title">任务清单 <span class="task-card-id">${escapeHtml(data.task_id || '')}</span></span>
+    </div>
+    <div class="task-card-body">${steps}</div>`;
+}
+
+/* ── 示例数据（覆盖全部状态） ── */
+const samples = [
+  {
+    task_id: 'task_1', status: '未完成', source: 'skill', current_step: 2,
+    steps: [
+      { index: 1, name: '信息采集与排盘', desc: '', status: '已执行' },
+      { index: 2, name: '三传与课格分析', desc: '', status: '执行中' },
+      { index: 3, name: '解读与结论输出', desc: '', status: '待执行' },
+      { index: 4, name: '复盘与归档', desc: '', status: '废弃' },
+    ],
+  },
+  {
+    task_id: 'task_2', status: '未完成', source: 'user', current_step: 2,
+    steps: [
+      { index: 1, name: '第一步', desc: '', status: '已执行' },
+      { index: 2, name: '第二步', desc: '', status: '执行中' },
+      { index: 3, name: '第三步', desc: '', status: '废弃' },
+      { index: 4, name: '第四步', desc: '', status: '待执行' },
+    ],
+  },
+  {
+    task_id: 'task_3', status: '未完成', source: 'user', current_step: 1,
+    steps: [
+      { index: 1, name: '第一步', desc: '', status: '待执行' },
+      { index: 2, name: '第二步', desc: '', status: '待执行' },
+    ],
+  },
+];
+
+// 与 index.html 调用一致：模板只产出 header+body，外层 .task-card 容器必须由调用方包裹
+// （index.html 中 onTaskCard / renderTaskCardFromMsg 同样如此）。
+// 此前直接 innerHTML = samples.map(taskCardTemplate).join('') 漏掉外层，
+// 导致 .task-card 类不存在、白底/边框/阴影等样式全部不生效（渲染成裸文字）。
+document.getElementById('demo').innerHTML = samples.map(function (data) {
+  const card = document.createElement('div');
+  card.className = 'task-card';
+  card.innerHTML = taskCardTemplate(data);
+  return card.outerHTML;
+}).join('');
+</script>
+</body>
+</html>
