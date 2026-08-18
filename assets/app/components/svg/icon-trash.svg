@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+  <g id="trash">
+    <path d="M2 5H18"/>
+    <path d="M6 5V4C6 3.44772 6.44772 3 7 3H13C13.5523 3 14 3.44772 14 4V5"/>
+    <path d="M16 5L15 16C15 16.5523 14.5523 17 14 17H6C5.44772 17 5 16.5523 5 16L4 5"/>
+    <path d="M8 9V14"/>
+    <path d="M12 9V14"/>
+  </g>
+</svg>

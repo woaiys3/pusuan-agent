@@ -1,0 +1,257 @@
+{
+  "models": [
+    {
+      "name": "DeepSeek",
+      "provider": "deepseek",
+      "base_url": "https://api.deepseek.com",
+      "model_name": "deepseek-v4-flash",
+      "context_window": 1000000,
+      "id": "855b415b",
+      "reasoning": true,
+      "thinking_mode": "max",
+      "permission_mode": "free"
+    },
+    {
+      "name": "DeepSeek",
+      "provider": "deepseek",
+      "base_url": "https://api.deepseek.com",
+      "model_name": "deepseek-v4-pro",
+      "context_window": 1000000,
+      "id": "f5e00c5e",
+      "reasoning": true,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "deepseek-v4-flash",
+      "context_window": 200000,
+      "id": "a476263f",
+      "reasoning": false,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "deepseek-v4-pro",
+      "context_window": 200000,
+      "id": "6bed667f",
+      "reasoning": false,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "glm-5",
+      "context_window": 200000,
+      "id": "1049767f",
+      "reasoning": false,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "glm-5.1",
+      "context_window": 200000,
+      "id": "e5561a5a",
+      "reasoning": false,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "minimax-m2.7",
+      "context_window": 200000,
+      "id": "029de8e4",
+      "reasoning": false,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "kimi-k2.5",
+      "context_window": 200000,
+      "id": "9465364b",
+      "reasoning": null,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "kimi-k2.6",
+      "context_window": 200000,
+      "id": "f0f01f50",
+      "reasoning": null,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "minimax-m2.5",
+      "context_window": 200000,
+      "id": "8d35ed52",
+      "reasoning": null,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "mimo-v2.5-pro",
+      "context_window": 200000,
+      "id": "e1cc71d0",
+      "reasoning": null,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "qwen3.7-max",
+      "context_window": 200000,
+      "id": "fbf61034",
+      "reasoning": null,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "kimi-k2.7-code",
+      "context_window": 200000,
+      "id": "0ed1a4ca",
+      "reasoning": null,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "glm-5.2",
+      "context_window": 200000,
+      "id": "0f477973",
+      "reasoning": null,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "qwen3.8-max",
+      "context_window": 200000,
+      "id": "84bf865d",
+      "reasoning": null,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "deepseek-v4-flash-0731",
+      "context_window": 200000,
+      "id": "1fd0abdc",
+      "reasoning": null,
+      "thinking_mode": "high",
+      "permission_mode": "free"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "seed-2.1-turbo",
+      "context_window": 200000,
+      "id": "e9ac74e0",
+      "reasoning": null,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "TokenRhythm",
+      "provider": "tokenrhythm",
+      "base_url": "https://tokenrhythm.studio/v1",
+      "model_name": "seed-2.1-pro",
+      "context_window": 200000,
+      "id": "52b60e1a",
+      "reasoning": null,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "Sensenova",
+      "provider": "sensenova",
+      "base_url": "https://token.sensenova.cn",
+      "model_name": "sensenova-6.7-flash-lite",
+      "context_window": 262144,
+      "id": "a53384cd",
+      "reasoning": false,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "Sensenova",
+      "provider": "sensenova",
+      "base_url": "https://token.sensenova.cn",
+      "model_name": "deepseek-v4-flash",
+      "context_window": 262144,
+      "id": "aecd1eb9",
+      "reasoning": true,
+      "thinking_mode": "medium",
+      "permission_mode": "free"
+    },
+    {
+      "name": "Sensenova",
+      "provider": "sensenova",
+      "base_url": "https://token.sensenova.cn",
+      "model_name": "glm-5.2",
+      "context_window": 262144,
+      "id": "19f956cb",
+      "reasoning": true,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "Sensenova",
+      "provider": "sensenova",
+      "base_url": "https://token.sensenova.cn",
+      "model_name": "sensenova-u1-fast",
+      "context_window": 262144,
+      "id": "a46ed392",
+      "reasoning": null,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    },
+    {
+      "name": "Sensenova",
+      "provider": "sensenova",
+      "base_url": "https://token.sensenova.cn",
+      "model_name": "sensenova-6.8-flash-lite",
+      "context_window": 262144,
+      "id": "4b1592d1",
+      "reasoning": false,
+      "thinking_mode": "high",
+      "permission_mode": "ask"
+    }
+  ]
+}
