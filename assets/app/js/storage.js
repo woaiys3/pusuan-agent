@@ -262,6 +262,108 @@
     writeConv(conv);
   }
 
+  // ── 修复历史断链（对齐桌面版 storage.py repair_broken_tool_chains） ──
+  // 中断/重启会导致 assistant 带 tool_calls 的消息已落盘、tool 响应未存；
+  // 重建历史时 DeepSeek 报「assistant tool_calls 后必须紧跟 tool 消息」400。
+  // 规则：
+  //   1) 每个 assistant 的响应 = 其后连续的 tool 段（跳过 interactive/error/task_card 展示类）；
+  //   2) 段内按 call_id 逐个精确配对，未配对的 tool（错配/多余）删除；
+  //   3) 配对不足的 assistant call → 补「中断未完成」伪响应。
+  function repairBrokenToolChains(convId) {
+    var conv = readConv(convId);
+    if (!conv) return;
+    var msgs = conv.messages || [];
+    var changed = false;
+
+    // ── 配对式修复 ──
+    var usedTool = {};         // 参与配对的 tool 消息 index
+    var matchedAssistant = {}; // 已配对成功的 assistant 消息 id
+    for (var i = 0; i < msgs.length; i++) {
+      var m = msgs[i];
+      if (m.role !== 'assistant' || !m.tool_calls || !m.tool_calls.length) continue;
+      var expected = m.tool_calls.map(function (tc) { return tc.id; });
+      // 收集该 assistant 后的连续 tool 段
+      var segment = [];
+      var j = i + 1;
+      while (j < msgs.length) {
+        var r = msgs[j].role;
+        if (r === 'interactive' || r === 'error' || r === 'task_card') { j++; continue; }
+        if (r === 'tool') { segment.push(j); j++; continue; }
+        break;
+      }
+      // 逐 call 在段内找第一个匹配响应
+      var keep = {};
+      for (var k = 0; k < expected.length; k++) {
+        var cid = expected[k];
+        for (var sj = 0; sj < segment.length; sj++) {
+          var idx = segment[sj];
+          if (keep[idx]) continue;
+          var tid = null;
+          try { tid = JSON.parse(msgs[idx].content || '{}').tool_call_id; } catch (e) {}
+          if (tid === cid) { keep[idx] = true; break; }
+        }
+      }
+      for (var key in keep) usedTool[key] = true;
+      if (Object.keys(keep).length >= expected.length) {
+        matchedAssistant[m.id] = true;
+      }
+    }
+    // 删除未参与配对的 tool 消息
+    var newMsgs = [];
+    for (var a = 0; a < msgs.length; a++) {
+      if (msgs[a].role !== 'tool' || usedTool[a]) newMsgs.push(msgs[a]);
+    }
+    if (newMsgs.length !== msgs.length) { msgs = newMsgs; changed = true; }
+
+    // ── 补链：assistant 的 call 配对不足 → 补「缺失」的伪响应 ──
+    var ii = 0;
+    while (ii < msgs.length) {
+      var mm = msgs[ii];
+      if (mm.role === 'assistant' && mm.tool_calls && mm.tool_calls.length) {
+        if (matchedAssistant[mm.id]) { ii++; continue; }
+        // 该 assistant 之后已有的 tool 响应 call_id
+        var existing = {};
+        var jj = ii + 1;
+        while (jj < msgs.length && ['interactive', 'error', 'task_card', 'tool'].indexOf(msgs[jj].role) >= 0) {
+          if (msgs[jj].role === 'tool') {
+            try { existing[JSON.parse(msgs[jj].content || '{}').tool_call_id] = true; } catch (e) {}
+          }
+          jj++;
+        }
+        var missing = mm.tool_calls.filter(function (tc) { return !existing[tc.id]; });
+        if (missing.length) {
+          var toolMsgs = missing.map(function (tc) {
+            return {
+              id: uid8(), role: 'tool',
+              content: JSON.stringify({
+                name: tc.function ? tc.function.name : '?',
+                args: {}, result: '该工具调用因程序中断/重启未完成执行。',
+                tool_call_id: tc.id || 'call_unknown',
+              }),
+            };
+          });
+          msgs.splice.apply(msgs, [ii + 1, 0].concat(toolMsgs));
+          changed = true;
+          ii = ii + 1 + toolMsgs.length;
+          continue;
+        }
+        ii++;
+        continue;
+      }
+      ii++;
+    }
+    if (changed) {
+      conv.messages = msgs;
+      conv.updated_at = now();
+      writeConv(conv);
+      upsertIndex(convId, {
+        id: conv.id, title: conv.title, folder: conv.folder,
+        message_count: msgs.length,
+        created_at: conv.created_at, updated_at: conv.updated_at,
+      });
+    }
+  }
+
   function updateUsageStats(convId, promptTokens, cacheHitTokens) {
     var conv = readConv(convId);
     if (!conv) return { prompt_tokens: 0, cache_stats: {} };
@@ -483,6 +585,7 @@
     addMessage: addMessage, deleteMessage: deleteMessage, deleteMessageRound: deleteMessageRound,
     updateMessage: updateMessage, updateUsageStats: updateUsageStats,
     upsertTaskCard: upsertTaskCard, touchConversation: touchConversation,
+    repairBrokenToolChains: repairBrokenToolChains,
     loadArchives: loadArchives, saveArchives: saveArchives, getArchive: getArchive,
     addArchive: addArchive, renameArchive: renameArchive, removeArchive: removeArchive,
     createSubagent: createSubagent, getSubagent: getSubagent, updateSubagent: updateSubagent,

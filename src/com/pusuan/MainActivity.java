@@ -286,15 +286,31 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public String readAsset(String path) {
             try {
+                Log.i(TAG, "readAsset enter: " + path);
+                // 目录保护：path 是目录时 list 返回非空，直接返回 null（避免 open 目录挂起）
+                String[] entries = ctx.getAssets().list(path);
+                if (entries != null && entries.length > 0) {
+                    Log.i(TAG, "readAsset isDir: " + path);
+                    return null; // 是目录，不是文件
+                }
                 InputStream in = ctx.getAssets().open(path);
+                Log.i(TAG, "readAsset opened: " + path);
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 byte[] buf = new byte[8192];
-                int n;
-                while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+                int n, total = 0;
+                while ((n = in.read(buf)) > 0) {
+                    total += n;
+                    if (total > 10 * 1024 * 1024) { // 10MB 上限
+                        in.close();
+                        Log.w(TAG, "readAsset too large: " + path);
+                        return "[文件过大，超过10MB限制]";
+                    }
+                    out.write(buf, 0, n);
+                }
                 in.close();
                 return out.toString("UTF-8");
             } catch (Exception e) {
-                Log.w(TAG, "readAsset " + path + ": " + e);
+                Log.w(TAG, "readAsset fail " + path + ": " + e);
                 return null;
             }
         }
@@ -303,6 +319,7 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public String listAssetDir(String path) {
             try {
+                Log.i(TAG, "listAssetDir: " + path);
                 String[] list = ctx.getAssets().list(path);
                 if (list == null) return "[]";
                 StringBuilder sb = new StringBuilder("[");
