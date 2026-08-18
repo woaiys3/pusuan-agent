@@ -339,7 +339,11 @@
       }
     }
 
-    // 保存用户消息（persistUser=false 时只进请求消息，不落盘）
+    // 修复历史断链：ask 挂起/中断会导致 assistant(tool_calls) 后缺 tool 响应，
+    // 重建历史时 DeepSeek 400；请求前兜底修复当前对话（幂等，无断链零开销）。
+    S.repairBrokenToolChains(convId);
+
+        // 保存用户消息（persistUser=false 时只进请求消息，不落盘）
     if (persistUser) {
       S.addMessage(convId, 'user', userMessage, '', 0, 0, undefined, attachmentsList.length ? attachmentsList : undefined);
     }
@@ -441,6 +445,7 @@
 
         Promise.all(approvals).then(function (approvalList) {
           function processTool(i, tc, approved) {
+            if (cancelEvent && cancelEvent.aborted) return Promise.resolve();
             var toolName = tc.function.name;
             var toolArgs = {};
             try { toolArgs = JSON.parse(tc.function.arguments || '{}'); } catch (e) { toolArgs = {}; }
@@ -484,9 +489,16 @@
             } else if (toolName === 'knowledge_query') {
               p = Promise.resolve(T.knowledgeQuery(toolArgs));
             } else {
-              p = Promise.resolve().then(function () {
-                return T.executeTool(toolName, toolArgs, convId);
-              });
+              p = Promise.race([
+                Promise.resolve().then(function () {
+                  return T.executeTool(toolName, toolArgs, convId);
+                }),
+                new Promise(function (resolve) {
+                  setTimeout(function () {
+                    resolve('错误: 工具执行超时（30 秒），已中断。');
+                  }, 30000);
+                }),
+              ]);
             }
 
             return p.then(function (result) {
@@ -513,18 +525,21 @@
           nonSpawnIndexes.forEach(function (i) {
             chain = chain.then(function () {
               if (taskCompleted) return;
+              if (cancelEvent && cancelEvent.aborted) { onDone(); return; }
               return processTool(i, r.toolCalls[i], approvalList[i]);
             });
           });
 
           var spawnChain = spawnIndexes.length
             ? Promise.all(spawnIndexes.map(function (i) {
+                if (cancelEvent && cancelEvent.aborted) { onDone(); return Promise.resolve(); }
                 return processTool(i, r.toolCalls[i], approvalList[i]);
               }))
             : Promise.resolve();
 
           Promise.all([chain, spawnChain]).then(function () {
             if (taskCompleted) { console.log('[DoneTrace] task-complete onDone'); onDone(); return; }
+            if (cancelEvent && cancelEvent.aborted) { onDone(); return; }
             if (skillLoaded) {
               messages.push({ role: 'user', content:
                 '【任务系统】技能「' + skillLoaded + '」已加载。请立即调用 task 工具' +

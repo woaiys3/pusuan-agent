@@ -330,21 +330,7 @@
 
     // 5. /skills（技能文件夹，只读 assets）
     if (vpath === '/skills' || vpath.indexOf('/skills/') === 0) {
-      var srel = rel; // skills/xxx
-      var sraw = N.readAsset('app/' + srel);
-      if (sraw !== null) {
-        readCache[vpath] = true;
-        var slines = sraw.split('\n');
-        return slines.map(function (l, i) { return (i + 1) + '\t' + l; }).join('\n');
-      }
-      // 列目录
-      try {
-        var sdirs = JSON.parse(N.listAssetDir('app/' + srel) || '[]');
-        if (sdirs.length) {
-          return '目录: ' + vpath + '\n' + sdirs.sort().map(function (x) { return '  ' + x + (x.endsWith('.md') ? '' : '/'); }).join('\n');
-        }
-      } catch (e) {}
-      return '错误: 文件不存在: ' + vpath;
+      return assetReadOrList(rel, vpath);
     }
 
     // 6. 外部存储
@@ -389,22 +375,62 @@
     return '错误: 文件不存在: ' + vpath;
   }
 
-  // 知识库读取（assets，只读）
+  // 知识库读取：完全基于内存索引（buildKbIndex 已缓存全部内容），
+  // 不调用原生桥 —— 彻底避免中文/不存在路径在 Android assets 上卡死。
   function knowledgeRead(rel, vpath) {
-    // 尝试读文件
-    var kraw = N.readAsset('app/data/' + rel);
-    if (kraw !== null) {
-      readCache[vpath] = true;
-      var klines = kraw.split('\n');
-      return klines.map(function (l, i) { return (i + 1) + '\t' + l; }).join('\n');
-    }
-    // 列目录
-    try {
-      var dirs = JSON.parse(N.listAssetDir('app/data/' + rel) || '[]');
-      if (dirs.length) {
-        return '目录: ' + vpath + '\n' + dirs.sort().map(function (x) { return '  ' + x + '/'; }).join('\n');
+    var index = buildKbIndex();
+    // 1. 完全匹配文件路径 → 返回缓存内容
+    for (var i = 0; i < index.length; i++) {
+      if (index[i].path === vpath) {
+        readCache[vpath] = true;
+        var lines = index[i].content.split('\n');
+        return lines.map(function (l, j) { return (j + 1) + '\t' + l; }).join('\n');
       }
-    } catch (e) {}
+    }
+    // 2. 目录：匹配以 vpath/ 开头的文件 → 列出直接子项
+    var prefix = vpath.replace(/\/$/, '') + '/';
+    var subFiles = index.filter(function (f) { return f.path.indexOf(prefix) === 0; });
+    if (subFiles.length) {
+      var names = {};
+      subFiles.forEach(function (f) {
+        var rest = f.path.slice(prefix.length);
+        var first = rest.split('/')[0];
+        if (first) names[first] = true;
+      });
+      return '目录: ' + vpath + '\n' + Object.keys(names).sort().map(function (x) {
+        return '  ' + x + '/';
+      }).join('\n');
+    }
+    // 3. 根目录 /knowledge
+    if (vpath === '/knowledge') {
+      var libs = {};
+      index.forEach(function (f) { libs[f.lib] = true; });
+      return '目录: /knowledge\n' + Object.keys(libs).sort().map(function (x) { return '  ' + x + '/'; }).join('\n');
+    }
+    // 4. 不存在 → 秒回错误（不触碰原生桥）
+    return '错误: 文件不存在: ' + vpath;
+  }
+
+  // 通用 assets 读取/列表：避免 readAsset 打开目录导致卡死
+  function assetReadOrList(assetRel, vpath) {
+    // 先列目录：若返回非空 → 是目录；空数组 → 是文件或不存在
+    var listed = [];
+    try {
+      listed = JSON.parse(N.listAssetDir('app/' + assetRel) || '[]');
+    } catch (e) { listed = []; }
+    if (listed.length) {
+      // 目录 → 列出（区分 md 文件与子目录）
+      return '目录: ' + vpath + '\n' + listed.sort().map(function (x) {
+        return '  ' + x + (x.indexOf('.') >= 0 ? '' : '/');
+      }).join('\n');
+    }
+    // 非目录 → 尝试当文件读
+    var raw = N.readAsset('app/' + assetRel);
+    if (raw !== null) {
+      readCache[vpath] = true;
+      var lines = raw.split('\n');
+      return lines.map(function (l, i) { return (i + 1) + '\t' + l; }).join('\n');
+    }
     return '错误: 文件不存在: ' + vpath;
   }
 
@@ -551,8 +577,9 @@
           var text = N.readAsset(full);
           if (text) {
             var meta = parseSkillFrontmatter(text);
+            var relFromKb = full.replace(/^app\/data\/knowledge\//, '');
             out.push({
-              lib: lib, path: '/knowledge/' + lib + '/' + name,
+              lib: lib, path: '/knowledge/' + relFromKb,
               title: meta.title || name.replace(/\.md$/, ''),
               description: meta.description || '',
               content: text,

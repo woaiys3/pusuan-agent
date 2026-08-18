@@ -401,6 +401,12 @@
           askEvents[convId].resolve('ask 已被用户暂停。');
           delete askEvents[convId];
         }
+        // 强制结束前端流状态：即使后端工具链卡住，UI 也立即复位（光标/停止按钮）
+        try {
+          pushJs('window.Pusuan && Pusuan.onDone && Pusuan.onDone(' +
+            JSON.stringify(convId) + ');');
+        } catch (e) {}
+        delete streams[convId];
       }
       return jsonOk({ ok: true });
     },
