@@ -1,0 +1,10 @@
+{
+  "name": "sharp",
+  "version": "0.0.0-android-stub",
+  "description": "Android 桩：sharp 需 libvips 原生库，无 bionic 产物；图片附件暂由本体禁用",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  }
+}

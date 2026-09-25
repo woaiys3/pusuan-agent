@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 目标 28 的旧主题模型：全屏无标题，与内核的移动端姿态一致 -->
+    <style name="Theme.Pusuan" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+</resources>

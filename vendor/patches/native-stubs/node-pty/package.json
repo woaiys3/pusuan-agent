@@ -1,0 +1,10 @@
+{
+  "name": "node-pty",
+  "version": "0.0.0-android-stub",
+  "description": "Android 桩：node-pty 预编译产物无 bionic 版本；内核仅在开交互终端时用到",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  }
+}

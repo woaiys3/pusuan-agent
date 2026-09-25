@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 9（API 28）起，targetSdk >= 28 的应用默认禁止明文 HTTP。
+  内核是跑在本机的回环 HTTP 服务（127.0.0.1），必须显式放行才能通信，
+  否则请求会被系统拦下，表现为"引擎起来了但界面一直连不上"。
+
+  只放行 127.0.0.1 / localhost：这是最小放行面。
+  对外部主机仍然保持默认的禁止明文策略，不放开。
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+</network-security-config>

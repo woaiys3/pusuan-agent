@@ -1,0 +1,10 @@
+{
+  "name": "koffi",
+  "version": "0.0.0-android-stub",
+  "description": "Android 桩：koffi 是 Windows FFI 绑定，内核里所有调用点都在 win32 分支内",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  }
+}

@@ -1,0 +1,56 @@
+# 普算 Android 适配补丁（DSH home 层，作用于所有 profile）
+#
+# 本文件由 App 首次启动时写入 $DSH_HOME，内核组装配置树时作为 home 层叠加
+# （优先级高于 profile 层，见 profile-boot 的 homePatches）。
+#
+# 背景：原版发行目标是 Windows x64，配置树里若干行依赖 Windows 专属能力，
+# 或依赖 Android 上不存在的 Linux 内核特性，直接加载会拖垮整棵插件树。
+# 内核的 boot 会断言"所有启用条目必须激活"，所以不适用的行必须显式禁用，
+# 不能放任它们 pending。
+
+# ── HMR（热重载）：手机上无意义，且需额外的 node 启动参数 ────────
+# cordis-plugin-hmr 要求 node 以 --expose-internals 启动，否则激活即报错
+# "--expose-internals is required for HMR service"。
+# 热重载是开发期能力：手机端不追文件变更，也没有可重载的源码，
+# 无论从必要性还是从开销（文件监视）看都不应该启用。
+- id: hmr
+  disabled: true
+
+# ── 沙箱：Android 无可用执行链 ──────────────────────────────────────
+# dsh-sandbox-local 按平台选链：linux→bwrap/landlock、win32→windows-acl。
+# Android 的 process.platform 是 'android'（既非 linux 也非 win32），
+# 且其依赖的 dsh-sandbox-windows-acl 在**模块顶层**用 koffi 做结构体布局自检
+# （STARTUPINFOW.size !== 104 即抛错），Android 上无法加载。
+- id: sandbox
+  disabled: true
+
+# ── 沙箱版 bash：依赖上面的 sandbox ────────────────────────────────
+# dsh-bash-sandbox 注入 subprocess+sandbox+sandboxPolicy；sandbox 禁用后
+# 它永远等不到依赖，会被断言判为"未激活"而中断启动。
+# 它提供 ctx.shell —— 该角色改由 dsh-bash-local 承担（见下方 insert）。
+- id: bash-sandbox
+  disabled: true
+
+# ── 权限预设：与"无沙箱"不兼容 ──────────────────────────────────
+# dsh-permission-presets 构造时主动拒绝挂载在未约束的 bash 执行器上：
+# "the mounted bash executor does not confine (no sandboxMode)"。
+# 预设本身就绑定沙箱模式（read-only / workspace-write / danger-full-access），
+# 没有沙箱时这组预设无从生效，因此必须一并禁用。
+#
+# 安全边界说明：关掉它不等于"没有边界" —— 进程仍处于 Android 应用 UID 的沙箱内，
+# agent 只能读写应用私有目录与用户已授权的共享存储；工具调用层面的把关
+# 仍由 approval 行（@deepseek-ai/dsh-user-approval）负责。
+- id: permission
+  disabled: true
+
+# ── shell 提供方：换成不依赖沙箱的本地实现 ──────────────
+# 上游 base 层只挂了沙箱版 bash，没有 bash-local；这里补挂一个，
+# 让 ctx.shell 有提供方，从而 tool-bash 等消费方能激活。
+- insert:
+    - id: bash
+      name: '@deepseek-ai/dsh-bash-local'
+      config:
+        # 工作目录由 App 通过 DSH_WORKSPACE 传入（用户选定的工作区），
+        # 未设置时退回引擎进程目录。
+        cwd: !!js (process.env.DSH_WORKSPACE || process.cwd())
+        timeoutMs: 120000

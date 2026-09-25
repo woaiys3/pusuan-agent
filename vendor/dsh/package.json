@@ -1,0 +1,8 @@
+{
+  "name": "pusuan-kernel",
+  "private": true,
+  "version": "0.3.0",
+  "dependencies": {
+    "@deepseek-ai/dsh": "0.3.0"
+  }
+}

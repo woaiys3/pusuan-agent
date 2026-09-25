@@ -1,0 +1,23 @@
+# ── 构建产物（体积大且可复现，不入库）──
+# node 运行时由 tools/build-runtime.sh 从 Termux 源装配
+/vendor/runtime/
+# 内核 + 普算配置由 tools/prepare-payload.sh 从原版发行包提取装配
+/vendor/payload/
+# payload.zip 是上一步的产物，直接落在 assets 下
+/android/app/src/main/assets/payload.zip
+# APK 产出
+/dist/
+/android/app/build/
+/android/build/
+/android/.gradle/
+# Gradle 本地 SDK 路径
+/android/local.properties
+
+# ── 旧 WebView 版（历史实现，保留源码但不参与新构建）──
+# 如需保留请勿删除本段；它仅排除其构建输出
+/out/
+
+# ── 通用 ──
+*.log
+*.apk
+.DS_Store
