@@ -12,7 +12,7 @@
 | 文件 | 作用 | 大小 |
 |---|---|---|
 | `pusuan-skills.zip` | 8 个技能（六壬／六爻／塔罗／小六壬 ×v1/flash） | 74 KB |
-| `pusuan-persona.zip` | 2 个人格预设（标准／提问模式） | 29 KB |
+| `pusuan-persona.zip` | 2 个**新增**人格预设（普算·标准／提问模式），不动原版 | 33 KB |
 | `pusuan-knowledge.zip` | 570 篇语料 + `knowledge_search` 检索工具 | 11.3 MB |
 | `pusuan-divination.zip` | 四个起卦器 + 正确率量化 | 2.3 MB |
 | `dsh-plugin-mobile-adapt.zip` | 移动端适配（窄屏样式 + viewport） | 33 KB |
@@ -30,11 +30,28 @@
 再把包名加进 `<dshHome>/profiles/web/package.json` 的 `dsh.profile.bundles`，重启引擎。
 
 `pusuan-skills` 是纯 Markdown，直接拷进 `<dshHome>/skills/`（发现深度一层）。
-`pusuan-persona` 是预设补丁 + 生成器，见包内说明。
+`pusuan-persona` 装完界面里多出「普算·标准」与「提问模式」两个预设；
+**内核原有的预设一个不动**（默认仍是原版 `standard`），想用普算切过去就行。
 
 ---
 
 ## 这一版修了什么
+
+### `pusuan-persona` 1.0.1 —— 改成**只新增、不覆盖**
+
+早先的人格包是直接**改写**内核的 `standard` 预设。那会把默认模式占掉，
+用户就回不去原版了。现在改成**新增两个预设**：
+
+| 预设 | 说明 |
+|---|---|
+| `pusuan-standard`（普算·标准） | 新增：普算本体系统提示词 |
+| `pusuan-question`（提问模式） | 新增：提问式占卜人格 |
+
+内核自带的 `standard`（默认）/ `ptc` / `minimal` / `cordis` **逐字未动**，
+想用普算就在界面里切过去，不想用就切回来。
+
+实测（真 0.1.7 内核）：`standard` 的 prefix 仍是原版 `You are a coding agent…`，
+默认预设仍是 `standard`，启动 0 告警。
 
 ### `pusuan-knowledge` 1.0.1 —— `knowledge_search` 永远不注册
 
@@ -111,7 +128,7 @@ Error: Cannot read properties of undefined (reading 'y')
 | 文件 | MD5 |
 |---|---|
 | `pusuan-skills.zip` | `ef86ff861210d267dc61f6d842ae4b7e` |
-| `pusuan-persona.zip` | `f4ff67c430202679ff8da436e8c6fff5` |
+| `pusuan-persona.zip` | `8cb5dd174339734cecee1b2f88f90cce` |
 | `pusuan-knowledge.zip` | `1543615a373465ce593fa924fbeb0f97` |
 | `pusuan-divination.zip` | `c6dedabdcc38a8e416b3bcc07ffb6e91` |
 | `dsh-plugin-mobile-adapt.zip` | `4ec30a79fce126e3cb05a2f61b05634e` |

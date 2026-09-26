@@ -31,7 +31,7 @@ const ARCHIVE = `${DESKTOP}/_旧交付_归档`;
 /** 要上传的产物。顺序即 Release 里的展示顺序。 */
 const ASSETS = [
 	['pusuan-skills.zip', `${ARCHIVE}/pusuan-skills.zip`],
-	['pusuan-persona.zip', `${ARCHIVE}/pusuan-persona.zip`],
+	['pusuan-persona.zip', `${DESKTOP}/pusuan-persona.zip`],
 	['dsh-plugin-mobile-adapt.zip', `${ARCHIVE}/dsh-plugin-mobile-adapt.zip`],
 	['pusuan-knowledge.zip', `${DESKTOP}/pusuan-knowledge.zip`],
 	['pusuan-divination.zip', `${DESKTOP}/pusuan-divination.zip`],
