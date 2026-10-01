@@ -105,9 +105,10 @@ Error: Cannot read properties of undefined (reading 'y')
 | 塔罗真抽牌 | ✅ 含正逆位与**韦特牌文原文** |
 | 六壬 dt 回归 | ✅ **8/8**（修复前 4/8） |
 | 两插件同装联测 | ✅ 6 个工具全可用、0 告警 |
+| **三个插件在真机上装成并跑通** | ✅ **用户 2026-10-01 实测通过** |
 
-**未验证**（如实说）：`divination_quantify` 只验到注册 —— 它内部要跑四次模型阶段，
-本机无 API Key。检索与解断的**质量**也取决于模型，不在自动化验证范围内。
+**未验证**（如实说）：`divination_quantify` 只验到注册与装机 —— 它内部要跑四次模型阶段，
+而且需要先占一卦、拿到事后反馈才用得上。检索与解断的**质量**取决于模型，不在自动化验证范围内。
 
 ---
 
@@ -128,9 +129,9 @@ Error: Cannot read properties of undefined (reading 'y')
 | 文件 | MD5 |
 |---|---|
 | `pusuan-skills.zip` | `ef86ff861210d267dc61f6d842ae4b7e` |
-| `pusuan-persona.zip` | `8cb5dd174339734cecee1b2f88f90cce` |
-| `pusuan-knowledge.zip` | `1543615a373465ce593fa924fbeb0f97` |
-| `pusuan-divination.zip` | `c6dedabdcc38a8e416b3bcc07ffb6e91` |
+| `pusuan-persona.zip` | `1c6fcbdeb6d7ba9ee3339ba0d6a665c3` |
+| `pusuan-knowledge.zip` | `0e75df164ac8971726a9938f604e5700` |
+| `pusuan-divination.zip` | `8854b1fe09fc38973252bd84a46eeca7` |
 | `dsh-plugin-mobile-adapt.zip` | `4ec30a79fce126e3cb05a2f61b05634e` |
 
 ---

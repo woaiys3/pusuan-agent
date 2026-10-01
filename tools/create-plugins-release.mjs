@@ -87,7 +87,20 @@ async function api(pathname, init = {}, token) {
 async function publish(token, prepared, body) {
 	let rel = (await api(`/repos/${REPO}/releases/tags/${TAG}`, {}, token)).json;
 	if (rel?.id) {
-		console.log(`Release 已存在（id=${rel.id}），复用并补传缺失产物`);
+		// 已存在也**同步说明正文**：否则改了 release-body-plugins.md 却不上远端，
+		// 页面里还是旧文案（本脚本第一版就漏了这步，已修）。
+		const patched = await api(
+			`/repos/${REPO}/releases/${rel.id}`,
+			{
+				method: 'PATCH',
+				body: JSON.stringify({ name: TITLE, body }),
+				headers: { 'Content-Type': 'application/json' },
+			},
+			token
+		);
+		if (patched.status !== 200) throw new Error(`更新 Release 说明失败：HTTP ${patched.status}`);
+		rel = patched.json;
+		console.log(`Release 已存在（id=${rel.id}），已同步说明正文，复用并补传产物`);
 	} else {
 		const created = await api(
 			`/repos/${REPO}/releases`,
